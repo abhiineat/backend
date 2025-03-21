@@ -10,4 +10,10 @@ app.use(express.json(
 ));
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
+
+import { userRouter } from "./routes/user.js";
+
+app.use('/api/users', userRouter); 
+
+
 export { app };
