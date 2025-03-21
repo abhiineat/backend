@@ -1,5 +1,5 @@
-import {v2 as cloudinary} from 'cloudinary';
-import fs from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs/promises';
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -8,16 +8,17 @@ cloudinary.config({
 });
  
 const uploadImage = async (path) => {
-    try {
-        if (!path) return
-        const res = await cloudinary.uploader.upload(path, { resource_type: "auto" });   
-        console.log("file is uploaded to cloudinary");
-        return res.url;
-    }
-    catch (error) {
-        fs.unlinkSync(path);
-        console.log(error);
-    }
-}
+    if (!path) return null; 
 
-export {uploadImage}
+    try {
+        const res = await cloudinary.uploader.upload(path, { resource_type: "auto" });   
+
+        return { url: res.secure_url }; // ✅ Always return an object
+    } catch (error) {
+        return null;  // Return `null` instead of undefined
+    } finally {
+        await fs.unlink(path).catch(err => console.error("Failed to delete local file:", err)); // ✅ Always delete the local file
+    }
+};
+
+export { uploadImage };
