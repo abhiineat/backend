@@ -13,11 +13,11 @@ const uploadImage = async (path) => {
     try {
         const res = await cloudinary.uploader.upload(path, { resource_type: "auto" });   
 
-        return { url: res.secure_url }; // ✅ Always return an object
+        return { url: res.secure_url }; 
     } catch (error) {
-        return null;  // Return `null` instead of undefined
+        return null;  
     } finally {
-        await fs.unlink(path).catch(err => console.error("Failed to delete local file:", err)); // ✅ Always delete the local file
+        await fs.unlink(path).catch(err => console.error("Failed to delete local file:", err)); 
     }
 };
 
