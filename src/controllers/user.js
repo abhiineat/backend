@@ -3,30 +3,39 @@ import { User } from "../models/user.js";
 import { uploadImage } from "../utils/cloudinary.js";
 
 const register = asynchandle(async (req, res) => {
+    const { username, email, fullname, password } = req.body;
+
+    // Field validations
+    if (!username || !email || !fullname || !password) {
+        return res.status(400).json({
+            message: "Username, email, fullname, and password are required",
+        });
+    }
+
     if (!req.files?.avatar?.[0]) {
         return res.status(400).json({ message: "Avatar is required" });
     }
 
+    // Upload avatar
     const avatarLocalPath = req.files.avatar[0].path;
     const avatarUpload = await uploadImage(avatarLocalPath);
 
     if (!avatarUpload?.url) {
         return res.status(500).json({ message: "Avatar upload failed" });
     }
-    if(!req.body.password){
-        return res.status(400).json({ message: "Password is required" });
-    }
 
-    const existingUser = await User.findOne({ username: req.body.username });
+    // Check if username already exists
+    const existingUser = await User.findOne({ username });
     if (existingUser) {
         return res.status(400).json({ message: "Username is already taken" });
     }
 
+    // Create user
     const user = await User.create({
-        username: req.body.username,
-        email: req.body.email,
-        fullname: req.body.fullname,
-        password: req.body.password,
+        username,
+        email,
+        fullname,
+        password,
         avatar: avatarUpload.url
     });
 
@@ -37,7 +46,6 @@ const register = asynchandle(async (req, res) => {
 
     res.status(201).json({ message: "User created successfully", user: createdUser });
 });
-
 
 
 
