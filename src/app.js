@@ -12,7 +12,8 @@ app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 
 import { userRouter } from "./routes/user.js";
-
+import { tripRouter } from './routes/trip.js';
+app.use('/api/trips', tripRouter);
 app.use('/api/users', userRouter); 
 
 

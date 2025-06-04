@@ -3,7 +3,6 @@ import { asynchandle } from "../utils/asynchandler.js";
 import { User } from "../models/user.js";
 
 export const VerifyJWT = asynchandle(async (req, res, next) => {
-    // Get token from cookies or Authorization header
     const token = 
         req.cookies?.accessToken ||
         req.headers.authorization?.replace("Bearer ", "");
@@ -15,7 +14,6 @@ export const VerifyJWT = asynchandle(async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         
-        // Attach user to request (optional: fetch from DB if needed)
         const user = await User.findById(decoded._id).select("-password -refreshToken");
         
         if (!user) {

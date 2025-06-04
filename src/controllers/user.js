@@ -23,10 +23,13 @@ const register = asynchandle(async (req, res) => {
         return res.status(500).json({ message: "Avatar upload failed" });
     }
 
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-        return res.status(400).json({ message: "Username is already taken" });
-    }
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+
+if (existingUser) {
+    const takenField = existingUser.username === username ? 'Username' : 'Email';
+    return res.status(400).json({ message: `${takenField} is already taken` });
+}
+
 
     const user = await User.create({
         username,
