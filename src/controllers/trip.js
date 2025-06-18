@@ -8,7 +8,7 @@ export const createTrip = async (req, res) => {
       // ✅ Pull user ID from the token
       const userId = req.userId;
   
-      // Generate a simple invite code
+
       const inviteCode = Math.random().toString(36).substr(2, 8).toUpperCase();
   
       const newTrip = await Trip.create({
